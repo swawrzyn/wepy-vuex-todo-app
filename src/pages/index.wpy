@@ -1,0 +1,104 @@
+<style lang="less"></style>
+<template>
+  <div class="container">
+    <title style="margin-bottom: 50rpx" title="Your Todos" />
+
+    <div v-if="todos.length === 0" style="width: 100%; text-align: center">
+      You have no todos! Create one!
+    </div>
+    <van-swipe-cell
+      v-for="todo in todos"
+      :key="todo.id"
+      style="width: 100%"
+      :right-width="95"
+    >
+      <van-cell-group>
+        <van-cell
+          :icon="todo.done ? 'success' : ''"
+          :title="todo.text"
+          value="<<"
+        />
+      </van-cell-group>
+      <view slot="right">
+        <van-button
+          v-if="!todo.done"
+          type="primary"
+          icon="success"
+          @click="clickDone(todo.id, true)"
+        />
+        <van-button
+          v-else
+          type="warning"
+          icon="replay"
+          @click="clickDone(todo.id, false)"
+        />
+        <van-button type="danger" icon="cross" @click="clickDelete(todo.id)" />
+      </view>
+    </van-swipe-cell>
+    <van-field
+      style="margin-top: 50rpx"
+      label="New Todo"
+      placeholder="Enter a todo here..."
+      @confirm="createTodo"
+    />
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import { mapState } from '@wepy/x';
+import store from '../store';
+
+wepy.page({
+  store,
+
+  data: {
+    fakeTodos: [
+      { id: 1, text: 'Do something', done: false },
+      { id: 2, text: 'Call mom', done: true },
+    ],
+  },
+
+  computed: {
+    ...mapState(['todos']),
+  },
+
+  methods: {
+    createTodo: function (e) {
+      const newTodo = {
+        id: this.$store.getters['NEXT_ID'],
+        text: e.$wx.detail,
+        done: false,
+      };
+      this.$store.dispatch('CREATE_NEW_TODO', newTodo);
+    },
+    clickDone: function (id, done) {
+      const todo = this.todos.find((t) => t.id === id);
+
+      const newTodo = { ...todo, done };
+
+      this.$store.dispatch('CHANGE_TODO', newTodo);
+    },
+    clickDelete: function (id) {
+      const todo = this.todos.find((t) => t.id === id);
+
+      this.$store.dispatch('REMOVE_TODO', todo);
+    },
+  },
+  created() {},
+});
+</script>
+<config>
+{
+    navigationBarTitleText: 'WePY + Vuex Todo App',
+    usingComponents: {
+      "title": "~@/components/title",
+      "van-cell": "module:@vant/weapp/dist/cell/index",
+      "van-cell-group": "module:@vant/weapp/dist/cell-group/index",
+      "van-swipe-cell": "module:@vant/weapp/dist/swipe-cell/index",
+      "van-field": "module:@vant/weapp/dist/field/index",
+      "van-button": "module:@vant/weapp/dist/button/index",
+      "van-icon": "module:@vant/weapp/dist/icon/index"
+    }
+}
+</config>

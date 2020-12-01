@@ -1,0 +1,28 @@
+<style lang="less">
+.title-text {
+  width: 100%;
+  font-size: 54rpx;
+  font-weight: bold;
+  text-align: center;
+}
+</style>
+<template>
+  <div class="title-text">
+    {{title}}
+  </div>
+</template>
+<script>
+  import wepy from '@wepy/core'
+  
+  wepy.component({
+    props: {
+      title: {
+        type: String,
+        required: true
+      }
+    },
+    methods: {
+    }
+  })
+</script>
+
